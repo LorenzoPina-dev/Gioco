@@ -4,6 +4,10 @@
  */
 package gioco;
 
+import Logica.Ostacolo;
+import Logica.Nemico;
+import Logica.Giocatore;
+import Logica.Mappa;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -12,7 +16,9 @@ import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.swing.JPanel;
 
 /**
@@ -24,17 +30,14 @@ public class Board  extends JPanel  {
     private  int B_WIDTH = 300;
     private  int B_HEIGHT = 300;
     public boolean inGame=true;
-    long last;
+    public long last;
     private static Board instance=null;
-    Giocatore giocatore;
-    Nemico n=new Nemico();
     public static Board Init(){
         if(instance==null)
             instance=new Board();
         return instance;
     }
     private Board(){
-        giocatore=new Giocatore(new Punto(100,100));
         initBoard();
     }
     @Override
@@ -45,19 +48,8 @@ public class Board  extends JPanel  {
     }
     
     private void doDrawing(Graphics g) {
-        if(inGame)
-        {
-            if(giocatore.inVita)
-                g.drawRect(giocatore.posizione.x, giocatore.posizione.y, 10, 10);
-            else
-            {
-                System.out.println("PERSO");
-                inGame=false;
-                gameOver(g);
-            }
-            if(n.inVita)
-                g.fillRect(n.posizione.x, n.posizione.y, 10, 10);
-        }
+        if(Mappa.Init().giocatore.inVita)
+            Mappa.Init().render(g);
         else
             gameOver(g);
     }
@@ -75,11 +67,12 @@ public class Board  extends JPanel  {
     
     private void initBoard() {
 
-        addKeyListener(new Tasti(this));
+        addKeyListener(new Tasti());
         setBackground(Color.WHITE);
         setFocusable(true);
 
         setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
     }
+
 
 }

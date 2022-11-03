@@ -4,13 +4,18 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/java/Gioco/src/gioco/ThreadNemico.java</file>
+            <file>file:/D:/java/Gioco/src/Logica/Nemico.java</file>
+            <file>file:/D:/java/Gioco/src/Logica/TipoNemico.java</file>
+            <file>file:/D:/java/Gioco/src/Logica/Giocatore.java</file>
+            <file>file:/D:/java/Gioco/src/Logica/Ostacolo.java</file>
+            <file>file:/D:/java/Gioco/src/gioco/Gioco.java</file>
+            <file>file:/D:/java/Gioco/src/PathFinding/Nodo.java</file>
+            <file>file:/D:/java/Gioco/src/Logica/Mappa.java</file>
+            <file>file:/D:/java/Gioco/src/PathFinding/AStar.java</file>
             <file>file:/D:/java/Gioco/src/gioco/Board.java</file>
             <file>file:/D:/java/Gioco/src/gioco/Tasti.java</file>
-            <file>file:/D:/java/Gioco/src/gioco/Punto.java</file>
-            <file>file:/D:/java/Gioco/src/gioco/Giocatore.java</file>
-            <file>file:/D:/java/Gioco/src/gioco/Nemico.java</file>
-            <file>file:/D:/java/Gioco/src/gioco/Gioco.java</file>
             <file>file:/D:/java/Gioco/src/gioco/ThreadRender.java</file>
+            <file>file:/D:/java/Gioco/src/Record/Punto.java</file>
         </group>
     </open-files>
 </project-private>

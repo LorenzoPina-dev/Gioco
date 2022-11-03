@@ -4,6 +4,8 @@
  */
 package gioco;
 
+import Logica.Mappa;
+import Logica.Nemico;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,17 +17,31 @@ public class ThreadNemico extends Thread{
     private int DELAY = 150;
     @Override
     public void run(){
-        while(Board.Init().n.inVita)
+        boolean termina=false;
+        while(!termina)
         {
-            if(Board.Init().n.posizione.DistanzaDa(Board.Init().giocatore.posizione)<10)
-                Board.Init().giocatore.SubisciDanni(Board.Init().n.danniInflitti);
-            else
-                Board.Init().n.muovi(Board.Init().n.posizione.Direzione(Board.Init().giocatore.posizione));
+            termina=true;
+            for(Nemico n:Mappa.Init().nemici)
+            {
+                if(Mappa.Init().giocatore.inVita){
+                    termina=false;  
+                    if(n.inVita)
+                        if(n.getDistanza(Mappa.Init().giocatore.posizione)<20)
+                            Mappa.Init().giocatore.SubisciDanni(n.danniInflitti);
+                        else
+                        //if(n.posizione.DistanzaDa(Mappa.Init().giocatore.posizione)<50)
+                            try{
+                            n.muovi(n.GetProssimoPasso());
+                            }catch (Exception ex) {
+                            }
+                }
+            }
             try {
                 Thread.sleep(DELAY);
             } catch (InterruptedException ex) {
                 Logger.getLogger(ThreadNemico.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
         }
     }
 }

@@ -4,6 +4,7 @@
  */
 package gioco;
 
+import Logica.Mappa;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 
@@ -13,6 +14,7 @@ import javax.swing.JFrame;
  */
 public class Gioco  extends JFrame{
     public Gioco() {
+        Mappa.Init();
         Board.Init();
         initUI();
         ThreadRender tr=new ThreadRender();

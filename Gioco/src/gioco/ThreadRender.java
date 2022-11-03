@@ -4,6 +4,7 @@
  */
 package gioco;
 
+import Logica.Mappa;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,7 +13,7 @@ import java.util.logging.Logger;
  * @author user
  */
 public class ThreadRender extends Thread{
-    private int DELAY = 140;
+    private int DELAY = 10;
     public ThreadRender(){
     }
     @Override
@@ -21,8 +22,8 @@ public class ThreadRender extends Thread{
         {
             try {
                 Board.Init().repaint();
-                Board.Init().giocatore.AumentaStamina();
-                Thread.sleep(10);
+                Mappa.Init().giocatore.AumentaStamina();
+                Thread.sleep(DELAY);
             } catch (InterruptedException ex) {
                 Logger.getLogger(ThreadRender.class.getName()).log(Level.SEVERE, null, ex);
             }
