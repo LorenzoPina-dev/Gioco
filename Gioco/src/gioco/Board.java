@@ -68,6 +68,7 @@ public class Board  extends JPanel  {
     private void initBoard() {
 
         addKeyListener(new Tasti());
+        addMouseMotionListener(new Mouse());
         setBackground(Color.WHITE);
         setFocusable(true);
 

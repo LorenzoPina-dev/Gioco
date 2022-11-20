@@ -4,8 +4,10 @@
  */
 package gioco;
 
+import Logica.Freccia;
 import Logica.Mappa;
 import Logica.Nemico;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,6 +17,7 @@ import java.util.logging.Logger;
  */
 public class ThreadNemico extends Thread{
     private int DELAY = 150;
+    Long lastShot;
     @Override
     public void run(){
         boolean termina=false;
@@ -26,8 +29,28 @@ public class ThreadNemico extends Thread{
                 if(Mappa.Init().giocatore.inVita){
                     termina=false;  
                     if(n.inVita)
-                        if(n.getDistanza(Mappa.Init().giocatore.posizione)<20)
-                            Mappa.Init().giocatore.SubisciDanni(n.danniInflitti);
+                        if(n.possoAttaccare() )
+                            switch(n.tipo){
+                                case stazionario:
+                                    lanciaFreccia(n);
+                                    break;
+                                case tank:
+                                    Mappa.Init().giocatore.SubisciDanni(n.danniInflitti);
+                                    break;
+                                case daLontano:
+                                    if(n.getDistanza(Mappa.Init().giocatore.posizione)<20 )
+                                    {
+                                        long now=new Date().getTime();
+                                        if(n.UltimaFreccia==null ||now-n.UltimaFreccia>2000)
+                                        {
+                                            Mappa.Init().giocatore.SubisciDanni(n.danniInflitti);
+                                            n.UltimaFreccia=now;
+                                        }
+                                    }
+                                    else
+                                        lanciaFreccia(n);
+                                    break;
+                            }
                         else
                         //if(n.posizione.DistanzaDa(Mappa.Init().giocatore.posizione)<50)
                             try{
@@ -42,6 +65,18 @@ public class ThreadNemico extends Thread{
                 Logger.getLogger(ThreadNemico.class.getName()).log(Level.SEVERE, null, ex);
             }
             
+        }
+        
+    }
+    public void lanciaFreccia(Nemico n){
+        long now=new Date().getTime();
+        if(n.UltimaFreccia==null ||now-n.UltimaFreccia>2000)
+        {    
+            synchronized(Mappa.Init().syncfrecce)
+            {
+                Mappa.Init().FrecceInCampo.add(new Freccia(n.posizione,n.posizione.Direzione(Mappa.Init().giocatore.posizione)));
+            }
+            n.UltimaFreccia=now;
         }
     }
 }

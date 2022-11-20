@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  * @author user
  */
 public class ThreadRender extends Thread{
-    private int DELAY = 10;
+    private int DELAY = 50;
     public ThreadRender(){
     }
     @Override

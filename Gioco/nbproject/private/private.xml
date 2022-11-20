@@ -8,12 +8,15 @@
             <file>file:/D:/java/Gioco/src/Logica/TipoNemico.java</file>
             <file>file:/D:/java/Gioco/src/Logica/Giocatore.java</file>
             <file>file:/D:/java/Gioco/src/Logica/Ostacolo.java</file>
+            <file>file:/D:/java/Gioco/src/gioco/Mouse.java</file>
             <file>file:/D:/java/Gioco/src/gioco/Gioco.java</file>
             <file>file:/D:/java/Gioco/src/PathFinding/Nodo.java</file>
+            <file>file:/D:/java/Gioco/src/Logica/Freccia.java</file>
             <file>file:/D:/java/Gioco/src/Logica/Mappa.java</file>
             <file>file:/D:/java/Gioco/src/PathFinding/AStar.java</file>
             <file>file:/D:/java/Gioco/src/gioco/Board.java</file>
             <file>file:/D:/java/Gioco/src/gioco/Tasti.java</file>
+            <file>file:/D:/java/Gioco/src/gioco/ThreadGestioneFrecce.java</file>
             <file>file:/D:/java/Gioco/src/gioco/ThreadRender.java</file>
             <file>file:/D:/java/Gioco/src/Record/Punto.java</file>
         </group>

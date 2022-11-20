@@ -40,9 +40,10 @@ public class Tasti  extends KeyAdapter {
         }
         if (key == KeyEvent.VK_Q){
             for(Nemico n:Mappa.Init().nemici)
-                if(n.getDistanza(Mappa.Init().giocatore.posizione)<20 && n.inVita)
-                {n.SubisciDanni(Mappa.Init().giocatore.danniInflitti);
-                break;
+                if(n.getDistanza(Mappa.Init().giocatore.posizione)<20 && n.inVita&& Mappa.Init().giocatore.posizione.Direzione(n.posizione)-Mappa.Init().giocatore.direzioneGuarda<Math.PI/12)
+                {
+                    n.SubisciDanni(Mappa.Init().giocatore.danniInflitti);
+                    break;
                 }
         }
     }

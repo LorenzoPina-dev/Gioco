@@ -3,7 +3,9 @@ package Logica;
 import Record.Punto;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import util.UtilGrafica;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -30,12 +33,15 @@ public class Mappa {
     public Ostacolo spada;
     public int dimensioneCelle=10;
     public int maxRighe=30,maxColonne=30;
+    public List<Freccia> FrecceInCampo;
+    public Object syncfrecce;
     private Mappa(){
         giocatore=new Giocatore(new Punto(5,5),dimensioneCelle);
         InitMappa();
     }
     private void InitMappa(){
-        
+        syncfrecce=new Object();
+        FrecceInCampo=new ArrayList();
         nemici=new ArrayList<>();
         cure=new ArrayList<>();
         spada=new Ostacolo(new Punto((int)(Math.random()*maxRighe),(int)(Math.random()*maxColonne)),1,1);
@@ -44,7 +50,7 @@ public class Mappa {
         for(int i=0;i<3;i++)
             nemici.add(new Nemico(new Punto((int)(Math.random()*maxRighe),(int)(Math.random()*maxColonne)),dimensioneCelle));
         for(Nemico n:nemici)
-            n.tipo=TipoNemico.values()[(int)(Math.random()*3)];
+            n.tipo=TipoNemico.daLontano;//TipoNemico.values()[(int)(Math.random()*3)];
         //nemici.add(new Nemico(new Punto(29,29),dimensioneCelle));
         //nemici.add(new Nemico(new Punto(0,29),dimensioneCelle));
         ostacoli=new ArrayList<>();
@@ -124,6 +130,34 @@ public class Mappa {
         g.drawRect(0,20, 150, 20);
         g.setColor(Color.yellow);
         g.fillRect(0, 20,(int)(giocatore.stamina/(float)giocatore.Maxstamina*150), 20);
+        Punto Posizionegiocatore=new Punto(giocatore.posizione.x*dimensioneCelle,giocatore.posizione.y*dimensioneCelle);
+        
+        //g.drawLine(Posizionegiocatore.x, Posizionegiocatore.y, Punto.add(Posizionegiocatore,20,giocatore.direzioneGuarda-Math.PI/12).x, Punto.add(Posizionegiocatore,20,giocatore.direzioneGuarda-Math.PI/12).y);
+        //g.drawLine(Posizionegiocatore.x, Posizionegiocatore.y, Punto.add(Posizionegiocatore,20,giocatore.direzioneGuarda+Math.PI/12).x, Punto.add(Posizionegiocatore,20,giocatore.direzioneGuarda+Math.PI/12).y);
+        
+        Graphics2D g2d = (Graphics2D)g;
+        try {
+            g2d.translate(giocatore.posizione.x*dimensioneCelle+dimensioneCelle/2,giocatore.posizione.y*dimensioneCelle+dimensioneCelle/2);
+            g2d.rotate((giocatore.direzioneGuarda+Math.PI/4)*-1);
+            g.drawImage(UtilGrafica.rotateImageByDegrees(ImageIO.read(new File("Sword.png")), 90), 0,0,dimensioneCelle*3/2,dimensioneCelle*3/2, null);
+            g2d.rotate(giocatore.direzioneGuarda+Math.PI/4);
+            g2d.translate((giocatore.posizione.x*dimensioneCelle+dimensioneCelle/2)*-1,(giocatore.posizione.y*dimensioneCelle+dimensioneCelle/2)*-1);
+        } catch (IOException ex) {
+            Logger.getLogger(Mappa.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        synchronized(Mappa.Init().syncfrecce)
+        {
+            for(Freccia f:FrecceInCampo)
+                try {
+                    g2d.translate(f.posizione.x+dimensioneCelle/2,f.posizione.y+dimensioneCelle/2);
+                    g2d.rotate((f.direzione-Math.PI/4)*-1);
+                    g.drawImage(ImageIO.read(new File("Arrow.png")) , 0,0,dimensioneCelle,dimensioneCelle, null);
+                    g2d.rotate(f.direzione-Math.PI/4);
+                    g2d.translate((f.posizione.x+dimensioneCelle/2)*-1,(f.posizione.y+dimensioneCelle/2)*-1);
+                } catch (IOException ex) {
+                    Logger.getLogger(Mappa.class.getName()).log(Level.SEVERE, null, ex);
+                }
+        }
     }
     
     public boolean Controllacollisioni() {
@@ -158,5 +192,18 @@ public class Mappa {
         for(Nemico n:nemici)
             if(n.getDistanza(giocatore.posizione)<60)
                 n.RicalcolaPercorso(giocatore.posizione);
+    }
+    boolean ControllaOstacoli(Giocatore giocatore, Nemico nemico) {
+        Punto centroGiocatore=new Punto(giocatore.posizione.x*dimensioneCelle+dimensioneCelle/2,giocatore.posizione.y*dimensioneCelle+dimensioneCelle/2);
+        Punto centroNemico=new Punto(nemico.posizione.x*dimensioneCelle+dimensioneCelle/2,nemico.posizione.y*dimensioneCelle+dimensioneCelle/2);
+        double direzioneNemico=centroNemico.Direzione(centroGiocatore);
+        double distanzaGiocatore=centroGiocatore.DistanzaDa(centroNemico);
+        for(Ostacolo o:ostacoli)
+        {
+            Punto centroOstacolo=new Punto(o.posizione.x*dimensioneCelle+dimensioneCelle/2,o.posizione.y*dimensioneCelle+dimensioneCelle/2);
+            if(centroOstacolo.DistanzaDa(centroNemico)<distanzaGiocatore&& Math.abs(direzioneNemico-centroNemico.Direzione(centroOstacolo))<Math.PI/6)
+                return true;
+        }
+        return false;
     }
 }

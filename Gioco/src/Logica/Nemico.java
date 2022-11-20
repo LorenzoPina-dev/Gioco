@@ -21,11 +21,12 @@ public class Nemico {
     int velocita;// n caselle percorse/secondo
     public boolean inVita;
     int scala;
-    TipoNemico tipo;
+    public TipoNemico tipo;
     Long UltimoMovimento;
     public int danniInflitti;
     public Stack<Punto> prossimiPassi;
     public Object sync;
+    public Long UltimaFreccia;
     public Nemico(int scala){
         init(new Punto(0,0),scala);
     }
@@ -68,15 +69,18 @@ public class Nemico {
                 return -1;
             case tank:
                 if(prossimiPassi.size()<=1)
-                    return 1;
+                    return -1;
                 return 0;
             case daLontano:
-                if(prossimiPassi.size()<=6)
+                if(prossimiPassi.size()<=1)
                     return 1;
+                if(prossimiPassi.size()<=6 && !Mappa.Init().ControllaOstacoli(Mappa.Init().giocatore,this))
+                    return -1;
                 return 0;
         }
         return 0;
     }
+    
     public void RicalcolaPercorso(Punto destinazione){
         synchronized (this) {
             prossimiPassi=AStar.printPath(AStar.findPath(posizione, destinazione));
@@ -93,6 +97,25 @@ public class Nemico {
     }
     public double getDistanza(Punto p) {
         return posizione.DistanzaDa(p)*scala;
+    }
+    public boolean possoAttaccare(){
+        if(GestisciDistanze()!=-1)
+            return false;
+        switch (tipo) {
+            case stazionario:
+                if(getDistanza(Mappa.Init().giocatore.posizione)<100 )
+                    return true;
+                break;
+            case tank:
+                if(getDistanza(Mappa.Init().giocatore.posizione)<20 )
+                    return true;
+                break;
+            case daLontano:
+                if(getDistanza(Mappa.Init().giocatore.posizione)<80 )
+                    return true;
+                break;
+        }
+        return false;
     }
 
 }

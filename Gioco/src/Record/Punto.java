@@ -12,7 +12,7 @@ import gioco.*;
  * @author user
  */
 public class Punto {
-    public int x,y;
+     public int x,y;
     public Punto(int x,int y){
         this.x=x;
         this.y=y;
@@ -39,12 +39,12 @@ public class Punto {
             if(sin>=0)
                 return arccos;//primo quadrante
             else
-                return 2*Math.PI+arcsin;
+                return arcsin;
         else 
             if(sin>=0)
                 return arccos;//secondo quadrante
             else
-                return arccos+Math.PI/2;
+                return Math.PI*2-arccos;
     }
     public static Punto add(Punto primo,Punto secondo){
         Punto add=new Punto();

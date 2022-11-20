@@ -14,6 +14,7 @@ import java.util.Date;
  *
  * @author user
  */
+
 public class Giocatore {
     int MaxVita,vita,stamina,Maxstamina,staminaPerCasella,scala;
     public Punto posizione;
@@ -21,6 +22,7 @@ public class Giocatore {
     public boolean inVita;
     Long UltimoMovimento;
     public int danniInflitti;
+    public double direzioneGuarda;
     public Giocatore(int scala){
         init(new Punto(0,0),scala);
     }
