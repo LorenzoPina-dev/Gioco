@@ -19,8 +19,8 @@ public class Gioco  extends JFrame{
         initUI();
         ThreadRender tr=new ThreadRender();
         tr.start();
-        ThreadNemico tn=new ThreadNemico();
-        tn.start();
+        //ThreadNemico tn=new ThreadNemico();
+        //tn.start();
         ThreadGestioneFrecce tf=new ThreadGestioneFrecce();
         tf.start();
     }

@@ -27,15 +27,15 @@ public class Nemico {
     public Stack<Punto> prossimiPassi;
     public Object sync;
     public Long UltimaFreccia;
-    public Nemico(int scala){
-        init(new Punto(0,0),scala);
+    public Nemico(int scala,int livello){
+        init(new Punto(0,0),scala,livello);
     }
-    private void init(Punto p,int scala){
-        maxVita=100;
+    private void init(Punto p,int scala,int livello){
+        maxVita=(int)(100*(1+livello/50f));
         vita=maxVita;
         posizione=p;
         velocita=100;
-        danniInflitti=10;
+        danniInflitti=(int)(10*(1+livello/50f));
         prossimiPassi=new Stack<>();
         sync=new Object();
         this.scala=scala;
@@ -43,8 +43,8 @@ public class Nemico {
     
     public Nemico(){
     }
-    public Nemico(Punto p,int scala){
-        init(p, scala);
+    public Nemico(Punto p,int scala,int livello){
+        init(p, scala,livello);
     }
     public Punto GetProssimoPasso(){
         Punto ris=posizione;
@@ -69,8 +69,8 @@ public class Nemico {
             case stazionario:
                 return -1;
             case tank:
-                if(prossimiPassi.size()<=1)
-                    return -1;
+                if(prossimiPassi.size()<2)
+                    return 1;
                 return 0;
             case daLontano:
                 if(prossimiPassi.size()<=1)

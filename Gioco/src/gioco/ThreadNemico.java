@@ -7,6 +7,7 @@ package gioco;
 import Logica.Freccia;
 import Logica.Mappa;
 import Logica.Nemico;
+import Record.Punto;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,19 +24,23 @@ public class ThreadNemico extends Thread{
         while(!termina)
         {
             termina=true;
-            for(Nemico n:Mappa.Init().nemici)
-            {
-                if(Mappa.Init().giocatore.inVita){
-                    termina=false;  
-                    if(n.possoAttaccare() )
-                        n.attacca();
-                    else
-                        //if(n.posizione.DistanzaDa(Mappa.Init().giocatore.posizione)<50)
-                            try{
-                                n.muovi(n.GetProssimoPasso());
-                            }catch (Exception ex) {
-                            }
+            try{
+                for(Nemico n:Mappa.Init().nemici)
+                {
+                    if(Mappa.Init().giocatore.inVita){
+                        termina=false;  
+                        if(n.possoAttaccare() )
+                            n.attacca();
+                        else
+                            //if(n.posizione.DistanzaDa(Mappa.Init().giocatore.posizione)<50)
+                                try{
+                                    n.muovi(n.GetProssimoPasso());
+                                }catch (Exception ex) {
+                                }
+                    }
                 }
+            }catch (Exception ex) {
+                        termina=false;  
             }
             try {
                 Thread.sleep(DELAY);
@@ -44,6 +49,17 @@ public class ThreadNemico extends Thread{
             }
             
         }
-        
+        for(int i=0;i<Mappa.Init().ostacoli.size();i++)
+        {
+            Punto p=Mappa.Init().ostacoli.get(i).posizione;
+            if(p.x==0&& p.y>Mappa.Init().maxRighe/2-2&&p.y<Mappa.Init().maxRighe/2+2)
+                Mappa.Init().ostacoli.remove(i--);
+            else if(p.y==0&& p.x>Mappa.Init().maxColonne/2-2&&p.x<Mappa.Init().maxColonne/2+2)
+                Mappa.Init().ostacoli.remove(i--);
+            else if(p.x==Mappa.Init().maxColonne-1&& p.y>Mappa.Init().maxRighe/2-2&&p.y<Mappa.Init().maxRighe/2+2)
+                Mappa.Init().ostacoli.remove(i--);
+            else if(p.y==Mappa.Init().maxRighe-1&& p.x>Mappa.Init().maxColonne/2-2&&p.x<Mappa.Init().maxColonne/2+2)
+                Mappa.Init().ostacoli.remove(i--);
+        }
     }
 }

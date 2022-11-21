@@ -2,7 +2,10 @@ package Logica;
 
 import util.TipoNemico;
 import Record.Punto;
+import gioco.Board;
+import gioco.ThreadNemico;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -36,30 +39,71 @@ public class Mappa {
     public int maxRighe=30,maxColonne=30;
     public List<Freccia> FrecceInCampo;
     public Object syncfrecce,syncNemici;
+    int livello;
     private Mappa(){
+        livello=0;
         giocatore=new Giocatore(new Punto(5,5),dimensioneCelle);
         InitMappa();
     }
     private void InitMappa(){
+        livello++;
         syncfrecce=new Object();
         syncNemici=new Object();
         FrecceInCampo=new ArrayList();
         nemici=new ArrayList<>();
         cure=new ArrayList<>();
-        spada=new Ostacolo(new Punto((int)(Math.random()*maxRighe),(int)(Math.random()*maxColonne)),1,1);
-        for(int i=0;i<(int)(Math.random()*5)+5;i++)
-            cure.add(new Ostacolo(new Punto((int)(Math.random()*maxRighe),(int)(Math.random()*maxColonne)),1,1));
-        for(int i=0;i<3;i++)
-            nemici.add(new Nemico(new Punto((int)(Math.random()*maxRighe),(int)(Math.random()*maxColonne)),dimensioneCelle));
+        ostacoli=new ArrayList();
+        for(int i=0;i<maxColonne;i++)
+            ostacoli.add(new Ostacolo(new Punto(0,i),1,1));
+        for(int i=0;i<maxRighe;i++)
+            ostacoli.add(new Ostacolo(new Punto(i,0),1,1));
+        for(int i=0;i<maxColonne;i++)
+            ostacoli.add(new Ostacolo(new Punto(maxRighe-1,i),1,1));
+        for(int i=0;i<maxRighe;i++)
+            ostacoli.add(new Ostacolo(new Punto(i,maxColonne-1),1,1));
+        boolean vaBene=true;
+        while(vaBene)
+        {
+            Punto p=new Punto((int)(Math.random()*maxRighe),(int)(Math.random()*maxColonne));
+            vaBene=true;
+            if(p.x>0&&p.x<maxColonne-1&&p.y>0&&p.y<maxRighe-1)
+            {
+                spada=new Ostacolo(p,1,1);
+                vaBene=false;
+            }
+        }
+        int NCure=0,maxCure=(int)(Math.random()*5)+5;
+        while(NCure<maxCure)
+        {
+            Punto p=new Punto((int)(Math.random()*(maxRighe-5))+5,(int)(Math.random()*(maxColonne-5))+5);
+            if(p.x>0&&p.x<maxColonne-1&&p.y>0&&p.y<maxRighe-1)
+            {
+                cure.add(new Ostacolo(p,1,1));
+                NCure++;
+            }
+        }
+        int Nnemici=0,maxNemici=3+livello/5;
+        while(Nnemici<maxNemici)
+        {
+            vaBene=true;
+            Punto p=new Punto((int)(Math.random()*(maxRighe-5))+5,(int)(Math.random()*(maxColonne-5))+5);
+            for(Ostacolo o:ostacoli)
+                if(o.posizione.equals(p))
+                    vaBene=false;
+            if(p.x>0&&p.x<maxColonne-1&&p.y>0&&p.y<maxRighe-1)
+            {
+                nemici.add(new Nemico(p,dimensioneCelle,livello));
+                Nnemici++;
+            }
+        }
         for(Nemico n:nemici)
             n.tipo=TipoNemico.values()[(int)(Math.random()*3)];
-        ostacoli=new ArrayList<>();
         for(int i=0;i<maxRighe;i++)
             for(int j=0;j<maxColonne;j++){
                 Punto p=new Punto(i,j);
                 if(Math.random()<0.15&&!p.equals(giocatore.posizione))
                 {
-                    boolean vaBene=true;
+                    vaBene=true;
                     for(Nemico n:nemici)
                         if(p.equals(n.posizione))
                             vaBene=false;
@@ -68,10 +112,13 @@ public class Mappa {
                     for(Ostacolo n:cure)
                         if(p.equals(n.posizione))
                             vaBene=false;
+                    if(p.x>maxColonne-4&&p.y<4)
+                        vaBene=false;
                     if(vaBene)
                         ostacoli.add(new Ostacolo(p,1,1));
                 }
             }
+        new ThreadNemico().start();
     }
     public static Mappa Init(){
         if(instance==null)
@@ -127,6 +174,9 @@ public class Mappa {
         g.drawRect(0,20, 150, 20);
         g.setColor(Color.yellow);
         g.fillRect(0, 20,(int)(giocatore.stamina/(float)giocatore.Maxstamina*150), 20);
+        g.setColor(Color.black);
+        g.setFont(new Font("TimesRoman", Font.PLAIN, 20)); 
+        g.drawString(livello+"", maxColonne*dimensioneCelle-30,30);
         Punto Posizionegiocatore=new Punto(giocatore.posizione.x*dimensioneCelle,giocatore.posizione.y*dimensioneCelle);
         Graphics2D g2d = (Graphics2D)g;
         try {
@@ -163,14 +213,14 @@ public class Mappa {
         }
     }
     
-    public boolean Controllacollisioni() {
+    public int Controllacollisioni() {
         if(giocatore.posizione.x<0||giocatore.posizione.x>=maxRighe||giocatore.posizione.y<0||giocatore.posizione.y>=maxColonne){
             InitMappa();
-            return true;
+            return -1;
         }
         for(Ostacolo o:ostacoli)
             if(o.Hacolliso(giocatore.posizione))
-                return true;
+                return 1;
         for(int i=0;i<cure.size();i++)
             if(cure.get(i).Hacolliso(giocatore.posizione)&&giocatore.vita<giocatore.MaxVita)
             {
@@ -182,7 +232,7 @@ public class Mappa {
             giocatore.AumentaDanno();
             spada=null;
         }
-        return false;
+        return 0;
     }
     public boolean Controllacollisioni(Punto punto) {
         if(punto.x<0||punto.x>=maxRighe||punto.y<0||punto.y>=maxColonne)

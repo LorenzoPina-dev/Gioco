@@ -91,10 +91,22 @@ public class Giocatore {
                 posizione=Punto.add(posizione,p);
                 stamina-=staminaPerCasella;
             }
-            if(!Mappa.Init().Controllacollisioni())
+            int ris=Mappa.Init().Controllacollisioni();
+            if(ris==0)
                 return posizione;
-            else
+            else if(ris==1)
                 return last;
+            else
+            {
+                if(posizione.x==-1)
+                    return Punto.add(posizione,new Punto(2,0));
+                if(posizione.x==Mappa.Init().maxColonne)
+                    return Punto.add(posizione,new Punto(-2,0));
+                if(posizione.y==-1)
+                    return Punto.add(posizione,new Punto(0,2));
+                if(posizione.y==Mappa.Init().maxRighe)
+                    return Punto.add(posizione,new Punto(0,-2));
+            }
         }
         return null;
     }
