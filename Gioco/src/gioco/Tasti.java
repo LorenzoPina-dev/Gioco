@@ -4,12 +4,14 @@
  */
 package gioco;
 
+import Logica.Freccia;
 import Logica.Mappa;
 import Logica.Nemico;
 import Record.Punto;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Scanner;
+import util.ArmaGiocatore;
 
 /**
  *
@@ -39,12 +41,21 @@ public class Tasti  extends KeyAdapter {
             b.giocatore.muovi(new Punto(0,1));
         }
         if (key == KeyEvent.VK_Q){
-            for(Nemico n:Mappa.Init().nemici)
-                if(n.getDistanza(Mappa.Init().giocatore.posizione)<20 && n.inVita&& Mappa.Init().giocatore.posizione.Direzione(n.posizione)-Mappa.Init().giocatore.direzioneGuarda<Math.PI/12)
-                {
-                    n.SubisciDanni(Mappa.Init().giocatore.danniInflitti);
+            Mappa.Init().giocatore.attacca();
+        }
+        if(key==KeyEvent.VK_Z)
+        {
+            switch (Mappa.Init().giocatore.armaAttuale) {
+                case Spada:
+                    Mappa.Init().giocatore.armaAttuale=ArmaGiocatore.Arco;
                     break;
-                }
+                case Arco:
+                    Mappa.Init().giocatore.armaAttuale=ArmaGiocatore.Scudo;
+                    break;
+                case Scudo:
+                    Mappa.Init().giocatore.armaAttuale=ArmaGiocatore.Spada;
+                    break;
+            }
         }
     }
 }

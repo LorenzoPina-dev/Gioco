@@ -25,8 +25,8 @@ public class AStar {
         inizio=new Nodo(1,start.x,start.y);
         fine=new Nodo(1,target.x,target.y);
         inizio.f = inizio.g + inizio.calculateHeuristic(fine);
-        closedList = new PriorityQueue<>();
-        openList = new PriorityQueue<>();
+        closedList = new PriorityQueue();
+        openList = new PriorityQueue();
         openList.add(inizio);
 
         while (!openList.isEmpty()) {
@@ -67,7 +67,7 @@ public class AStar {
         if (n == null) {
             return null;
         }
-        Stack<Punto> percorso = new Stack<>();
+        Stack<Punto> percorso = new Stack();
         while (n.padre != null) {
             percorso.push(n.p);
             n = n.padre;

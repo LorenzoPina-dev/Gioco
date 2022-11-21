@@ -35,14 +35,11 @@ public class Punto {
         double sin=(y-secondo.y)/distanza,cos=(x-secondo.x)/distanza*-1;
         double arcsin=Math.asin(sin);
         double arccos=Math.acos(cos);
-        if(cos>=0)
-            if(sin>=0)
-                return arccos;//primo quadrante
-            else
-                return arcsin;
+        if(sin>=0)
+            return arccos;//primo quadrante
         else 
-            if(sin>=0)
-                return arccos;//secondo quadrante
+            if(cos>=0)
+                return Math.PI*2+arcsin;//secondo quadrante
             else
                 return Math.PI*2-arccos;
     }

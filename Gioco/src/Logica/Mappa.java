@@ -1,5 +1,6 @@
 package Logica;
 
+import util.TipoNemico;
 import Record.Punto;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -34,13 +35,14 @@ public class Mappa {
     public int dimensioneCelle=10;
     public int maxRighe=30,maxColonne=30;
     public List<Freccia> FrecceInCampo;
-    public Object syncfrecce;
+    public Object syncfrecce,syncNemici;
     private Mappa(){
         giocatore=new Giocatore(new Punto(5,5),dimensioneCelle);
         InitMappa();
     }
     private void InitMappa(){
         syncfrecce=new Object();
+        syncNemici=new Object();
         FrecceInCampo=new ArrayList();
         nemici=new ArrayList<>();
         cure=new ArrayList<>();
@@ -50,9 +52,7 @@ public class Mappa {
         for(int i=0;i<3;i++)
             nemici.add(new Nemico(new Punto((int)(Math.random()*maxRighe),(int)(Math.random()*maxColonne)),dimensioneCelle));
         for(Nemico n:nemici)
-            n.tipo=TipoNemico.daLontano;//TipoNemico.values()[(int)(Math.random()*3)];
-        //nemici.add(new Nemico(new Punto(29,29),dimensioneCelle));
-        //nemici.add(new Nemico(new Punto(0,29),dimensioneCelle));
+            n.tipo=TipoNemico.values()[(int)(Math.random()*3)];
         ostacoli=new ArrayList<>();
         for(int i=0;i<maxRighe;i++)
             for(int j=0;j<maxColonne;j++){
@@ -87,9 +87,7 @@ public class Mappa {
                 Logger.getLogger(Mappa.class.getName()).log(Level.SEVERE, null, ex);
             }
         else
-        {
             System.out.println("PERSO");
-        }
         g.setColor(Color.black);
         for(Ostacolo o:ostacoli)
             g.fillRect(o.posizione.x*dimensioneCelle,o.posizione.y*dimensioneCelle, o.altezza*dimensioneCelle, o.lunghezza*dimensioneCelle);
@@ -101,17 +99,16 @@ public class Mappa {
                 Logger.getLogger(Mappa.class.getName()).log(Level.SEVERE, null, ex);
             }
         for(Nemico n: nemici)
-            if(n.inVita)
-            {
-                g.setColor(Color.orange);
-                g.fillRect(n.posizione.x*dimensioneCelle, n.posizione.y*dimensioneCelle, dimensioneCelle, dimensioneCelle);
-                g.setColor(Color.white);
-                g.fillRect(n.posizione.x*dimensioneCelle-5, n.posizione.y*dimensioneCelle-5, 20, 5);
-                g.setColor(Color.black);
-                g.drawRect(n.posizione.x*dimensioneCelle-5, n.posizione.y*dimensioneCelle-5, 20, 5);
-                g.setColor(Color.red);
-                g.fillRect(n.posizione.x*dimensioneCelle-5, n.posizione.y*dimensioneCelle-5, (int)(n.vita/(float)n.maxVita*20), 5);
-            }
+        {
+            g.setColor(Color.orange);
+            g.fillRect(n.posizione.x*dimensioneCelle, n.posizione.y*dimensioneCelle, dimensioneCelle, dimensioneCelle);
+            g.setColor(Color.white);
+            g.fillRect(n.posizione.x*dimensioneCelle-5, n.posizione.y*dimensioneCelle-5, 20, 5);
+            g.setColor(Color.black);
+            g.drawRect(n.posizione.x*dimensioneCelle-5, n.posizione.y*dimensioneCelle-5, 20, 5);
+            g.setColor(Color.red);
+            g.fillRect(n.posizione.x*dimensioneCelle-5, n.posizione.y*dimensioneCelle-5, (int)(n.vita/(float)n.maxVita*20), 5);
+        }
         if(spada!=null)
             try {
                 g.drawImage(ImageIO.read(new File("Sword.png")) , spada.posizione.x*dimensioneCelle, spada.posizione.y*dimensioneCelle,spada.altezza*dimensioneCelle*3/2,spada.lunghezza*dimensioneCelle*3/2, null);
@@ -131,15 +128,21 @@ public class Mappa {
         g.setColor(Color.yellow);
         g.fillRect(0, 20,(int)(giocatore.stamina/(float)giocatore.Maxstamina*150), 20);
         Punto Posizionegiocatore=new Punto(giocatore.posizione.x*dimensioneCelle,giocatore.posizione.y*dimensioneCelle);
-        
-        //g.drawLine(Posizionegiocatore.x, Posizionegiocatore.y, Punto.add(Posizionegiocatore,20,giocatore.direzioneGuarda-Math.PI/12).x, Punto.add(Posizionegiocatore,20,giocatore.direzioneGuarda-Math.PI/12).y);
-        //g.drawLine(Posizionegiocatore.x, Posizionegiocatore.y, Punto.add(Posizionegiocatore,20,giocatore.direzioneGuarda+Math.PI/12).x, Punto.add(Posizionegiocatore,20,giocatore.direzioneGuarda+Math.PI/12).y);
-        
         Graphics2D g2d = (Graphics2D)g;
         try {
             g2d.translate(giocatore.posizione.x*dimensioneCelle+dimensioneCelle/2,giocatore.posizione.y*dimensioneCelle+dimensioneCelle/2);
             g2d.rotate((giocatore.direzioneGuarda+Math.PI/4)*-1);
-            g.drawImage(UtilGrafica.rotateImageByDegrees(ImageIO.read(new File("Sword.png")), 90), 0,0,dimensioneCelle*3/2,dimensioneCelle*3/2, null);
+            switch (giocatore.armaAttuale) {
+                case Spada:
+                    g.drawImage(UtilGrafica.rotateImageByDegrees(ImageIO.read(new File("Sword.png")), 90), 0,0,dimensioneCelle*3/2,dimensioneCelle*3/2, null);
+                    break;
+                case Arco:
+                    g.drawImage(UtilGrafica.rotateImageByDegrees(ImageIO.read(new File("Bow.png")), 90), 0,0,dimensioneCelle*3/2,dimensioneCelle*3/2, null);
+                    break;
+                case Scudo:
+                    g.drawImage(UtilGrafica.rotateImageByDegrees(ImageIO.read(new File("Shield.png")), 90), 0,0,dimensioneCelle*3/2,dimensioneCelle*3/2, null);
+                    break;
+            }
             g2d.rotate(giocatore.direzioneGuarda+Math.PI/4);
             g2d.translate((giocatore.posizione.x*dimensioneCelle+dimensioneCelle/2)*-1,(giocatore.posizione.y*dimensioneCelle+dimensioneCelle/2)*-1);
         } catch (IOException ex) {
@@ -149,11 +152,11 @@ public class Mappa {
         {
             for(Freccia f:FrecceInCampo)
                 try {
-                    g2d.translate(f.posizione.x+dimensioneCelle/2,f.posizione.y+dimensioneCelle/2);
+                    g2d.translate(f.posizione.x,f.posizione.y);
                     g2d.rotate((f.direzione-Math.PI/4)*-1);
-                    g.drawImage(ImageIO.read(new File("Arrow.png")) , 0,0,dimensioneCelle,dimensioneCelle, null);
+                    g.drawImage(ImageIO.read(new File("Arrow.png")) , -dimensioneCelle/2,-dimensioneCelle/2,dimensioneCelle,dimensioneCelle, null);
                     g2d.rotate(f.direzione-Math.PI/4);
-                    g2d.translate((f.posizione.x+dimensioneCelle/2)*-1,(f.posizione.y+dimensioneCelle/2)*-1);
+                    g2d.translate((f.posizione.x)*-1,(f.posizione.y)*-1);
                 } catch (IOException ex) {
                     Logger.getLogger(Mappa.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -175,8 +178,9 @@ public class Mappa {
                 cure.remove(i);
             }
         if(spada !=null &&spada.Hacolliso(giocatore.posizione))
-        {giocatore.AumentaDanno();
-        spada=null;
+        {
+            giocatore.AumentaDanno();
+            spada=null;
         }
         return false;
     }

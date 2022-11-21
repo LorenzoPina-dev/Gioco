@@ -3,12 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/D:/java/Gioco/src/util/ArmaGiocatore.java</file>
+            <file>file:/D:/java/Gioco/src/util/UtilGrafica.java</file>
             <file>file:/D:/java/Gioco/src/gioco/ThreadNemico.java</file>
             <file>file:/D:/java/Gioco/src/Logica/Nemico.java</file>
-            <file>file:/D:/java/Gioco/src/Logica/TipoNemico.java</file>
             <file>file:/D:/java/Gioco/src/Logica/Giocatore.java</file>
             <file>file:/D:/java/Gioco/src/Logica/Ostacolo.java</file>
             <file>file:/D:/java/Gioco/src/gioco/Mouse.java</file>
+            <file>file:/D:/java/Gioco/src/util/TipoNemico.java</file>
             <file>file:/D:/java/Gioco/src/gioco/Gioco.java</file>
             <file>file:/D:/java/Gioco/src/PathFinding/Nodo.java</file>
             <file>file:/D:/java/Gioco/src/Logica/Freccia.java</file>

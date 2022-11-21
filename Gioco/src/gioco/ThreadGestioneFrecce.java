@@ -5,40 +5,59 @@
 package gioco;
 
 import Logica.Freccia;
+import Logica.Giocatore;
 import Logica.Mappa;
+import Logica.Nemico;
 import Record.Punto;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import util.ArmaGiocatore;
 
 /**
  *
  * @author user
  */
-public class ThreadGestioneFrecce extends Thread{
+public class ThreadGestioneFrecce extends Thread {
+
     @Override
-    public void run(){
-        while(true)
-        {
-            synchronized(Mappa.Init().syncfrecce)
-            {
-                for(int i=0;i<Mappa.Init().FrecceInCampo.size();i++)
-                {
-                    Punto p=Mappa.Init().FrecceInCampo.get(i).PrediciMovimento();
-                    int dimensioni=Mappa.Init().dimensioneCelle;
-                    Punto giocatore=Mappa.Init().giocatore.posizione;
-                    if(Mappa.Init().Controllacollisioni(new Punto(p.x/dimensioni,p.y/dimensioni)))
-                        Mappa.Init().FrecceInCampo.remove(i--);
-                    else if(p.DistanzaDa(new Punto(giocatore.x*dimensioni,giocatore.y*dimensioni))<8)
-                    {
-                        Mappa.Init().giocatore.SubisciDanni(Mappa.Init().FrecceInCampo.get(i).danno);
-                        Mappa.Init().FrecceInCampo.remove(i--);
-                    }
-                    else
-                        Mappa.Init().FrecceInCampo.get(i).muovi(p);
+    public void run() {
+        while (true) {
+            synchronized (Mappa.Init().syncfrecce) {
+                for (int i = 0; i < Mappa.Init().FrecceInCampo.size(); i++) {
+                    boolean muovi = true;
+                    List<Freccia> f = Mappa.Init().FrecceInCampo;
+                    Giocatore g = Mappa.Init().giocatore;
+                    Punto p = f.get(i).PrediciMovimento();
+                    int dimensioni = Mappa.Init().dimensioneCelle;
+                    Punto pCelle = new Punto(p.x / dimensioni, p.y / dimensioni);
+                    if (Mappa.Init().Controllacollisioni(pCelle)) {
+                        f.remove(i--);
+                        muovi = false;
+                    } else if (f.get(i).Nemica) {
+                        if (pCelle.DistanzaDa(g.posizione) < 1) {
+                            if (!g.possoParare(f.get(i).direzione))
+                                g.SubisciDanni(f.get(i).danno);
+                            muovi = false;
+                            f.remove(i--);
+                        }
+                    } else if (!f.get(i).Nemica) 
+                        synchronized (Mappa.Init().syncNemici) {
+                            for (Nemico n : Mappa.Init().nemici) 
+                                if (pCelle.DistanzaDa(n.posizione) < 1) {
+                                    if (!n.SubisciDanni(f.get(i).danno)) 
+                                        Mappa.Init().nemici.remove(n);
+                                    f.remove(i--);
+                                    muovi = false;
+                                    break;
+                                }
+                        }
+                    if (muovi)
+                        f.get(i).muovi(p);
                 }
             }
             try {
-                Thread.sleep(75 );
+                Thread.sleep(75);
             } catch (InterruptedException ex) {
                 Logger.getLogger(ThreadGestioneFrecce.class.getName()).log(Level.SEVERE, null, ex);
             }

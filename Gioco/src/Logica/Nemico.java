@@ -4,6 +4,7 @@
  */
 package Logica;
 
+import util.TipoNemico;
 import PathFinding.AStar;
 import Record.Punto;
 import gioco.Board;
@@ -19,7 +20,6 @@ public class Nemico {
     int vita,maxVita,stamina,staminaPerCasella;
     public Punto posizione;
     int velocita;// n caselle percorse/secondo
-    public boolean inVita;
     int scala;
     public TipoNemico tipo;
     Long UltimoMovimento;
@@ -35,13 +35,14 @@ public class Nemico {
         vita=maxVita;
         posizione=p;
         velocita=100;
-        inVita=true;
         danniInflitti=10;
         prossimiPassi=new Stack<>();
         sync=new Object();
         this.scala=scala;
     }
     
+    public Nemico(){
+    }
     public Nemico(Punto p,int scala){
         init(p, scala);
     }
@@ -92,8 +93,8 @@ public class Nemico {
     public boolean SubisciDanni(int danni){
         vita-=danni;
         if(vita<0)
-            inVita=false;
-        return inVita;
+            return false;
+        return true;
     }
     public double getDistanza(Punto p) {
         return posizione.DistanzaDa(p)*scala;
@@ -118,4 +119,30 @@ public class Nemico {
         return false;
     }
 
+    public boolean possoSparare(){
+        return UltimaFreccia==null|| new Date().getTime()-UltimaFreccia>=3000;
+    }
+    public void lanciaFreccia(){
+        synchronized(Mappa.Init().syncfrecce)
+        {
+            Mappa.Init().FrecceInCampo.add(new Freccia(posizione,posizione.Direzione(Mappa.Init().giocatore.posizione),danniInflitti));
+        }
+        UltimaFreccia=new Date().getTime();
+    }
+    public void attacca(){
+        switch(tipo){
+            case stazionario:
+                if(possoSparare())
+                    lanciaFreccia();
+                break;
+            case tank:
+                if(possoSparare())
+                    Mappa.Init().giocatore.SubisciDanni(danniInflitti);
+                break;
+            case daLontano:
+                if(possoSparare())
+                    lanciaFreccia();
+                break;
+        }
+    }
 }

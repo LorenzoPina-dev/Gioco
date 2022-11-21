@@ -17,13 +17,25 @@ public class Freccia {
     public int danno;
     public int velocita;
     public Long UltimoMovimento;
-    public Freccia(Punto posizione,double direzione){
+    public boolean Nemica;
+    public Freccia(){}
+    public Freccia(Punto posizione,double direzione,int danno){
         velocita=1;
-        danno=5;
+        this.danno=danno;
         int dimensioni=Mappa.Init().dimensioneCelle;
-        this.posizione=new Punto(posizione.x*dimensioni+dimensioni/4,posizione.y*dimensioni+dimensioni/4);
+        this.posizione=new Punto(posizione.x*dimensioni+dimensioni/2,posizione.y*dimensioni+dimensioni/2);
         UltimoMovimento=null;
         this.direzione=direzione;
+        Nemica=true;
+    }
+    public Freccia(Punto posizione,double direzione,int danno,boolean team){
+        velocita=1;
+        this.danno=danno;
+        int dimensioni=Mappa.Init().dimensioneCelle;
+        this.posizione=new Punto(posizione.x*dimensioni+dimensioni/2,posizione.y*dimensioni+dimensioni/2);
+        UltimoMovimento=null;
+        this.direzione=direzione;
+        Nemica=team;
     }
     public void muovi(Punto p){
         posizione=p;

@@ -20,9 +20,9 @@ public class ThreadRender extends Thread{
     public void run(){
         while(Board.Init().inGame)
         {
+            Mappa.Init().giocatore.AumentaStamina();
             try {
                 Board.Init().repaint();
-                Mappa.Init().giocatore.AumentaStamina();
                 Thread.sleep(DELAY);
             } catch (InterruptedException ex) {
                 Logger.getLogger(ThreadRender.class.getName()).log(Level.SEVERE, null, ex);

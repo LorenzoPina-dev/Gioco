@@ -8,6 +8,7 @@ import Record.Punto;
 import gioco.Board;
 import java.security.Timestamp;
 import java.util.Date;
+import util.ArmaGiocatore;
 
 
 /**
@@ -20,13 +21,15 @@ public class Giocatore {
     public Punto posizione;
     int velocita;// n caselle percorse/secondo
     public boolean inVita;
-    Long UltimoMovimento;
+    Long UltimoMovimento,ultimaFreccia;
     public int danniInflitti;
     public double direzioneGuarda;
+    public ArmaGiocatore armaAttuale;
     public Giocatore(int scala){
         init(new Punto(0,0),scala);
     }
     private void init(Punto p,int scala){
+        armaAttuale=ArmaGiocatore.Spada;
         MaxVita=300;
         vita=MaxVita;
         Maxstamina=100;
@@ -98,7 +101,7 @@ public class Giocatore {
     public void AumentaStamina() {
         long nuovo=new Date().getTime();
         if(stamina<Maxstamina && UltimoMovimento!=null && nuovo-UltimoMovimento>200)
-            stamina+=staminaPerCasella/5d;
+            stamina+=staminaPerCasella/2d;
     }
     public double getDistanza(Punto p) {
         return posizione.DistanzaDa(p)*scala;
@@ -111,5 +114,39 @@ public class Giocatore {
     }
     public void AumentaDanno() {
        danniInflitti+=5;      
+    }
+    public boolean possoSparare(){
+        return ultimaFreccia==null|| new Date().getTime()-ultimaFreccia>=100;
+    }
+    public void Spara(){
+        synchronized(Mappa.Init().syncfrecce)
+        {
+            Mappa.Init().FrecceInCampo.add(new Freccia(Mappa.Init().giocatore.posizione,Mappa.Init().giocatore.direzioneGuarda,Mappa.Init().giocatore.danniInflitti,false));
+        }
+        ultimaFreccia=new Date().getTime();
+    }
+    public boolean possoParare(double direzione){
+        if(armaAttuale==ArmaGiocatore.Scudo)
+            System.out.println("Scudo");
+        return !(armaAttuale!=ArmaGiocatore.Scudo || Math.abs(((direzione+Math.PI)%(2*Math.PI))-Math.abs(direzioneGuarda))>Math.PI/8);
+    }
+    public void attacca(){
+        switch (armaAttuale) {
+                case Spada:
+                    synchronized (Mappa.Init().syncNemici) {
+                        for(Nemico n:Mappa.Init().nemici)
+                            if(getDistanza(n.posizione)<20&& posizione.Direzione(n.posizione)-direzioneGuarda<Math.PI/12)
+                            {
+                                if(!n.SubisciDanni(danniInflitti))
+                                    Mappa.Init().nemici.remove(n);
+                                break;
+                            }
+                    }
+                    break;
+                case Arco:
+                    if(possoSparare())
+                        Spara();
+                    break;
+            }
     }
 }
