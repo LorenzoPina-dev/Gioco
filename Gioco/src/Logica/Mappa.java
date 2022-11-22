@@ -73,7 +73,7 @@ public class Mappa {
             {
                 Punto p=new Punto((int)(Math.random()*maxRighe),(int)(Math.random()*maxColonne));
                 vaBene=true;
-                if(p.x>0&&p.x<maxColonne-1&&p.y>0&&p.y<maxRighe-1)
+                if(!ostacoli.containsKey(p))
                 {
                     spada=new Ostacolo(p,1,1);
                     vaBene=false;
@@ -83,21 +83,17 @@ public class Mappa {
             while(NCure<maxCure)
             {
                 Punto p=new Punto((int)(Math.random()*(maxRighe-5))+5,(int)(Math.random()*(maxColonne-5))+5);
-                if(p.x>0&&p.x<maxColonne-1&&p.y>0&&p.y<maxRighe-1)
+                if(!ostacoli.containsKey(p))
                 {
-                    cure.add(new Ostacolo(p,1,1));
+                    cure.put(p,new Ostacolo(p,1,1));
                     NCure++;
                 }
             }
             int Nnemici=0,maxNemici=3+livello/5;
             while(Nnemici<maxNemici)
             {
-                vaBene=true;
                 Punto p=new Punto((int)(Math.random()*(maxRighe-5))+5,(int)(Math.random()*(maxColonne-5))+5);
-                for(Ostacolo o:ostacoli)
-                    if(o.posizione.equals(p))
-                        vaBene=false;
-                if(p.x>0&&p.x<maxColonne-1&&p.y>0&&p.y<maxRighe-1)
+                if(!ostacoli.containsKey(p)&& !cure.containsKey(p))
                 {
                     nemici.add(new Nemico(p,dimensioneCelle,livello));
                     Nnemici++;
