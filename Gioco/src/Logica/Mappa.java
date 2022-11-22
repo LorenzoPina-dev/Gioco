@@ -13,7 +13,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,7 +35,7 @@ public class Mappa {
     private static Mappa instance=null;
     public Giocatore giocatore;
     public List<Nemico> nemici;
-    public List<Ostacolo> ostacoli,cure;
+    public Map<Punto,Ostacolo> ostacoli,cure;
     public Ostacolo spada;
     public int dimensioneCelle=10;
     public int maxRighe=30,maxColonne=30;
@@ -51,74 +53,85 @@ public class Mappa {
         syncNemici=new Object();
         FrecceInCampo=new ArrayList();
         nemici=new ArrayList<>();
-        cure=new ArrayList<>();
-        ostacoli=new ArrayList();
+        cure=new HashMap();
+        ostacoli=new HashMap();
         for(int i=0;i<maxColonne;i++)
-            ostacoli.add(new Ostacolo(new Punto(0,i),1,1));
-        for(int i=0;i<maxRighe;i++)
-            ostacoli.add(new Ostacolo(new Punto(i,0),1,1));
-        for(int i=0;i<maxColonne;i++)
-            ostacoli.add(new Ostacolo(new Punto(maxRighe-1,i),1,1));
-        for(int i=0;i<maxRighe;i++)
-            ostacoli.add(new Ostacolo(new Punto(i,maxColonne-1),1,1));
-        boolean vaBene=true;
-        while(vaBene)
         {
-            Punto p=new Punto((int)(Math.random()*maxRighe),(int)(Math.random()*maxColonne));
-            vaBene=true;
-            if(p.x>0&&p.x<maxColonne-1&&p.y>0&&p.y<maxRighe-1)
-            {
-                spada=new Ostacolo(p,1,1);
-                vaBene=false;
-            }
+            Punto inizio=new Punto(0,i),fine=new Punto(maxRighe-1,i);
+            ostacoli.put(inizio,new Ostacolo(inizio,1,1));
+            ostacoli.put(fine,new Ostacolo(fine,1,1));
         }
-        int NCure=0,maxCure=(int)(Math.random()*5)+5;
-        while(NCure<maxCure)
-        {
-            Punto p=new Punto((int)(Math.random()*(maxRighe-5))+5,(int)(Math.random()*(maxColonne-5))+5);
-            if(p.x>0&&p.x<maxColonne-1&&p.y>0&&p.y<maxRighe-1)
-            {
-                cure.add(new Ostacolo(p,1,1));
-                NCure++;
-            }
-        }
-        int Nnemici=0,maxNemici=3+livello/5;
-        while(Nnemici<maxNemici)
-        {
-            vaBene=true;
-            Punto p=new Punto((int)(Math.random()*(maxRighe-5))+5,(int)(Math.random()*(maxColonne-5))+5);
-            for(Ostacolo o:ostacoli)
-                if(o.posizione.equals(p))
-                    vaBene=false;
-            if(p.x>0&&p.x<maxColonne-1&&p.y>0&&p.y<maxRighe-1)
-            {
-                nemici.add(new Nemico(p,dimensioneCelle,livello));
-                Nnemici++;
-            }
-        }
-        for(Nemico n:nemici)
-            n.tipo=TipoNemico.values()[(int)(Math.random()*3)];
         for(int i=0;i<maxRighe;i++)
-            for(int j=0;j<maxColonne;j++){
-                Punto p=new Punto(i,j);
-                if(Math.random()<0.15&&!p.equals(giocatore.posizione))
+        {
+            Punto inizio=new Punto(i,0),fine=new Punto(i,maxColonne-1);
+            ostacoli.put(inizio,new Ostacolo(inizio,1,1));
+            ostacoli.put(fine,new Ostacolo(fine,1,1));
+        }
+        if(livello%10!=0){
+            boolean vaBene=true;
+            while(vaBene)
+            {
+                Punto p=new Punto((int)(Math.random()*maxRighe),(int)(Math.random()*maxColonne));
+                vaBene=true;
+                if(p.x>0&&p.x<maxColonne-1&&p.y>0&&p.y<maxRighe-1)
                 {
-                    vaBene=true;
-                    for(Nemico n:nemici)
-                        if(p.equals(n.posizione))
-                            vaBene=false;
-                    if(p.equals(spada.posizione))
-                        vaBene=false;
-                    for(Ostacolo n:cure)
-                        if(p.equals(n.posizione))
-                            vaBene=false;
-                    if(p.x>maxColonne-4&&p.y<4)
-                        vaBene=false;
-                    if(vaBene)
-                        ostacoli.add(new Ostacolo(p,1,1));
+                    spada=new Ostacolo(p,1,1);
+                    vaBene=false;
                 }
             }
+            int NCure=0,maxCure=(int)(Math.random()*5)+3;
+            while(NCure<maxCure)
+            {
+                Punto p=new Punto((int)(Math.random()*(maxRighe-5))+5,(int)(Math.random()*(maxColonne-5))+5);
+                if(p.x>0&&p.x<maxColonne-1&&p.y>0&&p.y<maxRighe-1)
+                {
+                    cure.add(new Ostacolo(p,1,1));
+                    NCure++;
+                }
+            }
+            int Nnemici=0,maxNemici=3+livello/5;
+            while(Nnemici<maxNemici)
+            {
+                vaBene=true;
+                Punto p=new Punto((int)(Math.random()*(maxRighe-5))+5,(int)(Math.random()*(maxColonne-5))+5);
+                for(Ostacolo o:ostacoli)
+                    if(o.posizione.equals(p))
+                        vaBene=false;
+                if(p.x>0&&p.x<maxColonne-1&&p.y>0&&p.y<maxRighe-1)
+                {
+                    nemici.add(new Nemico(p,dimensioneCelle,livello));
+                    Nnemici++;
+                }
+            }
+            for(Nemico n:nemici)
+                n.tipo=TipoNemico.values()[(int)(Math.random()*3)];
+            for(int i=0;i<maxRighe;i++)
+                for(int j=0;j<maxColonne;j++){
+                    Punto p=new Punto(i,j);
+                    if(Math.random()<0.15&&!p.equals(giocatore.posizione))
+                    {
+                        vaBene=true;
+                        for(Nemico n:nemici)
+                            if(p.equals(n.posizione))
+                                vaBene=false;
+                        if(p.equals(spada.posizione))
+                            vaBene=false;
+                        for(Ostacolo n:cure)
+                            if(p.equals(n.posizione))
+                                vaBene=false;
+                        if(p.x>maxColonne-4&&p.y<4)
+                            vaBene=false;
+                        if(vaBene)
+                            ostacoli.add(new Ostacolo(p,1,1));
+                    }
+                }
+        }
         new ThreadNemico().start();
+    }
+    boolean ControllaPosizione(Punto p,boolean RoundBoss){
+        boolean ris=p.x>0&&p.x<maxColonne-1&&p.y>0&&p.y<maxRighe-1;
+        if(RoundBoss)
+            
     }
     public static Mappa Init(){
         if(instance==null)
