@@ -70,7 +70,7 @@ public class Mappa {
         boolean vaBene=true;
         while(vaBene)
         {
-            Punto p=new Punto((int)(Math.random()*maxRighe),(int)(Math.random()*maxColonne));
+            Punto p=new Punto((int)(Math.random()*(maxRighe-2))+1,(int)(Math.random()*(maxColonne-2))+1);
             vaBene=true;
             if(!ostacoli.containsKey(p))
             {
@@ -81,7 +81,7 @@ public class Mappa {
         int NCure=0,maxCure=(int)(Math.random()*5)+3;
         while(NCure<maxCure)
         {
-            Punto p=new Punto((int)(Math.random()*(maxRighe-5))+5,(int)(Math.random()*(maxColonne-5))+5);
+            Punto p=new Punto((int)(Math.random()*(maxRighe-6))+5,(int)(Math.random()*(maxColonne-6))+5);
             if(!ostacoli.containsKey(p))
             {
                 cure.put(p,new Ostacolo(p,1,1));
@@ -90,8 +90,8 @@ public class Mappa {
         }
         InitNemici();
         if(livello%10!=0){
-            for(int i=0;i<maxRighe;i++)
-                for(int j=0;j<maxColonne;j++){
+            for(int i=1;i<maxRighe-1;i++)
+                for(int j=1;j<maxColonne-1;j++){
                     Punto p=new Punto(i,j);
                     if(Math.random()<0.15&&!p.equals(giocatore.posizione))
                     {
@@ -159,9 +159,31 @@ public class Mappa {
                     Nnemici++;
                 }
             } 
+            if(livello<10)
+                for(Nemico n:nemici.values())
+                    n.tipo=TipoNemico.tank;
+            else if(livello<20)
+                for(Nemico n:nemici.values())
+                    n.tipo=TipoNemico.values()[(int)(Math.random()*2)];
+            else
+                for(Nemico n:nemici.values())
+                    n.tipo=TipoNemico.values()[(int)(Math.random()*3)];
         }
-        for(Nemico n:nemici.values())
-            n.tipo=TipoNemico.values()[(int)(Math.random()*3)];
+        else
+        {
+            Nemico boss=new Nemico(new Punto(maxRighe/2,maxColonne/2),dimensioneCelle,livello);
+            boss.boss=true;
+            if(livello==10)
+                boss.tipo=TipoNemico.tank;
+            else if(livello==20)
+                for(Nemico n:nemici.values())
+                    boss.tipo=TipoNemico.daLontano;
+            else if(livello==30)
+                boss.tipo=TipoNemico.stazionario;
+            else
+                boss.tipo=TipoNemico.values()[(int)(Math.random()*3)];
+            nemici.put(boss.posizione,boss);
+        }
     }
     public static Mappa Init(){
         if(instance==null)

@@ -9,5 +9,5 @@ package Logica;
  * @author user
  */
 public enum TipoNemico {
-    stazionario,tank,daLontano
+    tank,daLontano,stazionario
 }

@@ -17,6 +17,7 @@ import java.util.Stack;
  * @author user
  */
 public class Nemico {
+    public boolean boss;
     int vita,maxVita,stamina,staminaPerCasella;
     public Punto posizione;
     int velocita;// n caselle percorse/secondo
@@ -31,11 +32,16 @@ public class Nemico {
         init(new Punto(0,0),scala,livello);
     }
     private void init(Punto p,int scala,int livello){
+        boss=false;
         maxVita=(int)(100*(1+livello/50f));
+        if(boss)
+            maxVita*=2;
         vita=maxVita;
         posizione=p;
-        velocita=100;
+        velocita=200;
         danniInflitti=(int)(10*(1+livello/50f));
+        if(boss)
+            danniInflitti*=2;
         prossimiPassi=new Stack<>();
         sync=new Object();
         this.scala=scala;
