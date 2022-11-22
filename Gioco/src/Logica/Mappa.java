@@ -89,7 +89,7 @@ public class Mappa {
             }
         }
         InitNemici();
-        if(livello%10==0){
+        if(livello%10!=0){
             for(int i=0;i<maxRighe;i++)
                 for(int j=0;j<maxColonne;j++){
                     Punto p=new Punto(i,j);
