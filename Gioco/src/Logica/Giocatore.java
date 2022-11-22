@@ -146,11 +146,11 @@ public class Giocatore {
         switch (armaAttuale) {
                 case Spada:
                     synchronized (Mappa.Init().syncNemici) {
-                        for(Nemico n:Mappa.Init().nemici)
-                            if(getDistanza(n.posizione)<20&& posizione.Direzione(n.posizione)-direzioneGuarda<Math.PI/12)
+                        for(Punto p:Mappa.Init().nemici.keySet())
+                            if(getDistanza(Mappa.Init().nemici.get(p).posizione)<20&& posizione.Direzione(Mappa.Init().nemici.get(p).posizione)-direzioneGuarda<Math.PI/12)
                             {
-                                if(!n.SubisciDanni(danniInflitti))
-                                    Mappa.Init().nemici.remove(n);
+                                if(!Mappa.Init().nemici.get(p).SubisciDanni(danniInflitti))
+                                    Mappa.Init().nemici.remove(p);
                                 break;
                             }
                     }

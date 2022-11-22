@@ -43,10 +43,10 @@ public class ThreadGestioneFrecce extends Thread {
                         }
                     } else if (!f.get(i).Nemica) 
                         synchronized (Mappa.Init().syncNemici) {
-                            for (Nemico n : Mappa.Init().nemici) 
-                                if (pCelle.DistanzaDa(n.posizione) < 1) {
-                                    if (!n.SubisciDanni(f.get(i).danno)) 
-                                        Mappa.Init().nemici.remove(n);
+                            for (Punto punto : Mappa.Init().nemici.keySet()) 
+                                if (pCelle.DistanzaDa(Mappa.Init().nemici.get(punto).posizione) < 1) {
+                                    if (!Mappa.Init().nemici.get(punto).SubisciDanni(f.get(i).danno)) 
+                                        Mappa.Init().nemici.remove(punto);
                                     f.remove(i--);
                                     muovi = false;
                                     break;

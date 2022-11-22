@@ -7,8 +7,11 @@ package gioco;
 import Logica.Freccia;
 import Logica.Mappa;
 import Logica.Nemico;
+import Logica.Ostacolo;
 import Record.Punto;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,7 +28,7 @@ public class ThreadNemico extends Thread{
         {
             termina=true;
             try{
-                for(Nemico n:Mappa.Init().nemici)
+                for(Nemico n:Mappa.Init().nemici.values())
                 {
                     if(Mappa.Init().giocatore.inVita){
                         termina=false;  
@@ -49,17 +52,20 @@ public class ThreadNemico extends Thread{
             }
             
         }
-        for(int i=0;i<Mappa.Init().ostacoli.size();i++)
+        Map<Punto,Ostacolo> temp=new HashMap();
+        temp.putAll(Mappa.Init().ostacoli);
+        for(Punto p:Mappa.Init().ostacoli.keySet())
         {
-            Punto p=Mappa.Init().ostacoli.get(i).posizione;
             if(p.x==0&& p.y>Mappa.Init().maxRighe/2-2&&p.y<Mappa.Init().maxRighe/2+2)
-                Mappa.Init().ostacoli.remove(i--);
+                temp.remove(p);
             else if(p.y==0&& p.x>Mappa.Init().maxColonne/2-2&&p.x<Mappa.Init().maxColonne/2+2)
-                Mappa.Init().ostacoli.remove(i--);
+                temp.remove(p);
             else if(p.x==Mappa.Init().maxColonne-1&& p.y>Mappa.Init().maxRighe/2-2&&p.y<Mappa.Init().maxRighe/2+2)
-                Mappa.Init().ostacoli.remove(i--);
+                temp.remove(p);
             else if(p.y==Mappa.Init().maxRighe-1&& p.x>Mappa.Init().maxColonne/2-2&&p.x<Mappa.Init().maxColonne/2+2)
-                Mappa.Init().ostacoli.remove(i--);
+                temp.remove(p);
         }
+        Mappa.Init().ostacoli.clear();
+        Mappa.Init().ostacoli.putAll(temp);
     }
 }

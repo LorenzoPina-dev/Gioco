@@ -93,7 +93,7 @@ public class Nemico {
     public boolean SubisciDanni(int danni){
         vita-=danni;
         if(vita<0)
-            return false;
+             return false;
         return true;
     }
     public double getDistanza(Punto p) {
