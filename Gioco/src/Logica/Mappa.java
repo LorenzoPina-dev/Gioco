@@ -70,7 +70,7 @@ public class Mappa {
         boolean vaBene=true;
         while(vaBene)
         {
-            Punto p=new Punto((int)(Math.random()*(maxRighe-2))+1,(int)(Math.random()*(maxColonne-2))+1);
+            Punto p=new Punto((int)(Math.random()*(maxRighe-3))+2,(int)(Math.random()*(maxColonne-3))+2);
             vaBene=true;
             if(!ostacoli.containsKey(p))
             {
@@ -90,8 +90,8 @@ public class Mappa {
         }
         InitNemici();
         if(livello%10!=0){
-            for(int i=1;i<maxRighe-1;i++)
-                for(int j=1;j<maxColonne-1;j++){
+            for(int i=2;i<maxRighe-2;i++)
+                for(int j=2;j<maxColonne-2;j++){
                     Punto p=new Punto(i,j);
                     if(Math.random()<0.15&&!p.equals(giocatore.posizione))
                     {
@@ -104,6 +104,10 @@ public class Mappa {
                             vaBene=false;
                         if(ostacoli.containsKey(p))
                             vaBene=false;
+                        if(p.equals(giocatore.posizione))
+                            vaBene=false;
+                        else
+                            System.out.println("giocatore:"+ giocatore.posizione+" ostacolo:"+p);
                         if(vaBene)
                             ostacoli.put(p,new Ostacolo(p,1,1));
                     }

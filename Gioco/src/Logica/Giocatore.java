@@ -80,7 +80,7 @@ public class Giocatore {
         return null;
     }
 
-    public Punto PrediciMovimento(Punto p){
+    public Punto PrediciMovimento(Punto punto){
         if(inVita)
         {
             long nuovo=new Date().getTime();
@@ -88,7 +88,7 @@ public class Giocatore {
             if(UltimoMovimento==null||nuovo-UltimoMovimento>=velocita/1000l &&stamina>staminaPerCasella)
             {
                 UltimoMovimento=nuovo;
-                posizione=Punto.add(posizione,p);
+                posizione=Punto.add(posizione,punto);
                 stamina-=staminaPerCasella;
             }
             int ris=Mappa.Init().Controllacollisioni();
@@ -98,14 +98,16 @@ public class Giocatore {
                 return last;
             else
             {
+                Punto p=new Punto();
                 if(posizione.x==-1)
-                    return Punto.add(posizione,new Punto(2,0));
-                if(posizione.x==Mappa.Init().maxColonne)
-                    return Punto.add(posizione,new Punto(-2,0));
-                if(posizione.y==-1)
-                    return Punto.add(posizione,new Punto(0,2));
-                if(posizione.y==Mappa.Init().maxRighe)
-                    return Punto.add(posizione,new Punto(0,-2));
+                    p= Punto.add(posizione,new Punto(2,0));
+                else if(posizione.x==Mappa.Init().maxColonne)
+                    p= Punto.add(posizione,new Punto(-2,0));
+                else if(posizione.y==-1)
+                    p= Punto.add(posizione,new Punto(0,2));
+                else if(posizione.y==Mappa.Init().maxRighe)
+                    p= Punto.add(posizione,new Punto(0,-2));
+                return p;
             }
         }
         return null;
